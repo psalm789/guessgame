@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guessing Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        input {
+            padding: 12px;
+            width: 80%;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+        button {
+            background: #1a4a8a;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 88%;
+        }
+        button:hover {
+            background: #153a6b;
+        }
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            min-height: 25px;
+        }
+        .message.high { color: #e67e22; }
+        .message.low { color: #3498db; }
+        .message.win { color: #27ae60; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Guess the Number</h2>
+    <p>I'm thinking of a number from 1 to 20. You have 5 tries.</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="number" name="guess" placeholder="Enter 1-20" min="1" max="20" required>
+        <br>
+        <button type="submit">Guess</button>
+    </form>
+
+    {% if message %}
+        <div class="message 
+            {% if 'High' in message %}high{% endif %}
+            {% if 'Low' in message %}low{% endif %}
+            {% if 'Correct' in message or 'Game over' in message %}win{% endif %}
+        ">
+            {{ message }}
+        </div>
+        
+        {% if 'Correct' in message or 'Game over' in message %}
+            <br>
+            <a href="{% url 'guessing_game' %}"><button style="background: #555;">Play Again</button></a>
+        {% endif %}
+    {% endif %}
+
+    <p style="margin-top:20px; font-size:13px; color:#888;">
+        Attempt: {{ request.session.attempts|default:"0" }} / 5
+    </p>
+</div>
+
+</body>
+</html>
